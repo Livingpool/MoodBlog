@@ -55,7 +55,20 @@ function App() {
     <Routes>
       <Route exact path="/" element={<Welcome />} />
       <Route exact path="/new" element={<Newpage />} />
-      <Route exact path="/edit" element={<EditDiary />} />
+      <Route 
+        exact path="/edit" 
+        // element={<EditDiary />} 
+        element={
+          <>
+            <SignedIn>
+              <EditDiary />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        }
+      />
       <Route exact path="/AiFeedback/:sessionId/:user/:content" element={<AiFeedback />} />
       <Route exact path="/aichat" element={<Ai />} />
       <Route exact path="/zoo" element={<Navigate to="/zoo/chart" />} />
@@ -63,7 +76,20 @@ function App() {
       <Route exact path="/zoo/table" element={<Table />} />
       <Route exact path="/zoo/form/typical" element={<Form />} />
       <Route exact path="/zoo/form/file" element={<FormFile />} />
-      <Route exact path="/zoo/form/calendar" element={<Calendar />} />
+      <Route 
+        exact path="/zoo/form/calendar" 
+        // element={<Calendar />} 
+        element={
+          <>
+            <SignedIn>
+              <Calendar />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        }
+      />
       <Route exact path="/zoo/mui/modal" element={<Modal />} />
       <Route exact path="/zoo/mui/pagination" element={<Pagination />} />
       <Route exact path="/zoo/mui/carousel" element={<Carousel />} />
@@ -91,7 +117,7 @@ function App() {
       />
       <Route path="*" element={<NotFound />} />
     </Routes>
-    // </ClerkProvider>
+     </ClerkProvider>
   );
 }
 

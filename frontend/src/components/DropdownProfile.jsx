@@ -1,7 +1,7 @@
-// import { UserButton } from '@clerk/clerk-react'
+import { UserButton } from '@clerk/clerk-react'
 
 function DropdownProfile() {
-  // return <UserButton afterSignOutUrl="/" />
+  return <UserButton afterSignOutUrl="/" />
 }
 
 export default DropdownProfile;
