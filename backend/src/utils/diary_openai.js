@@ -6,8 +6,8 @@ require('dotenv').config()
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
-// 傳入 messages，取得 OpenAI API 的回覆
-const openAIChat = async (messages) => {
+// 日記版：傳入 messages，取得 OpenAI API 的回覆
+const diaryOpenAIChat = async (messages) => {
     // 輸入空訊息直接回傳
 	if (messages.length === 0) {
 		return "沒有收到訊息";
@@ -39,4 +39,4 @@ const openAIChat = async (messages) => {
 	}
 }
 
-module.exports = openAIChat
+module.exports = diaryOpenAIChat

@@ -6,10 +6,9 @@ import Layout from "../../partials/dashboard/Layout";
 import { useUser } from "@clerk/clerk-react";
 import axios from 'axios';
 
-export default function MoodBlogComponent({onClick}) {
+export default function MoodBlogComponent() {
   const { TextArea } = Input;
   const [text, setText] = useState("")
-  const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState(null);
 
   // Clerk user.
@@ -20,25 +19,20 @@ export default function MoodBlogComponent({onClick}) {
   const formattedDate = currentDate.toLocaleDateString();
 
   // 當使用者按下儲存，創建session。
-  // TODO: 沒有儲存到內容，改後端API。
-  const createSession = (user) => {
-    axios.post(`http://localhost:3000/users/${user.id}/sessions`)
-    .then((res) => {
-      console.log(res.data)
-      setSessionId(res.data._id)
-    }).catch((err) => {
-      console.log("Create session error!")
-      console.log(err)
+  // TODO: 應該是按下sidebar創建session，然後這裡儲存是更新session，邏輯上要修正。
+  const createSession = (user, content) => {
+    console.log("user: ", user.id);
+    console.log("content: ", content);
+    axios.post(`http://localhost:3000/createDiary/sessions`, {
+      user: user.id,
+      content: content
     })
-  };
-
-  const AddAiChat = async () => {
-    if (!isLoading) {
-      setIsLoading(true);
-      // setText("");
-      await onClick(); // API
-      setIsLoading(false);
-    }
+    .then((res) => {
+      console.log("Session data: ", res.data);
+      setSessionId(res.data._id);
+    }).catch((err) => {
+      console.log("Create session error: ", err);
+    })
   };
 
   return (
@@ -68,7 +62,7 @@ export default function MoodBlogComponent({onClick}) {
             </div>
           </Link>
               <div className="self-stretch flex flex-col w-[89px]">
-                  <button onClick={() => createSession(user)} className="text-pink-100 font-semibold rounded-lg bg-orange-600/95  hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '40px'}}>
+                  <button onClick={() => createSession(user, text)} className="text-pink-100 font-semibold rounded-lg bg-orange-600/95  hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '40px'}}>
                       儲存
                   </button>
               

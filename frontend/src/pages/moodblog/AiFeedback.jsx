@@ -33,7 +33,7 @@ export default function MoodBlogComponent() {
     console.log(sessionId);
     console.log(user);
     console.log(content);
-    axios.post(`http://localhost:3000/sessions/${sessionId}/content`, {
+    axios.post(`http://localhost:3000/getAIresponse/sessions/${sessionId}/content`, {
       user: user,
       content: content
     }).then((res) => {

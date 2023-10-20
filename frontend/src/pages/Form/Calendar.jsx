@@ -7,11 +7,28 @@ import Swal from "sweetalert2";
 
 export default function CalendarPage() {
   const [date, setDate] = useState(new Date());
+
+  // 整理日期格式
   const formatDate = (localDate) => {
     const year = localDate.getFullYear();
     const month = (1 + localDate.getMonth()).toString().padStart(2, "0");
     const day = localDate.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  // 由日期搜尋Diary
+  const searchDiaryHandler = (user) => {
+    setLoading(true);
+    axios.post(`http://localhost:3000/getAllSessions/users/${user}/sessions`)
+    .then((res) => {
+      console.log("Search diary: ", res.data);
+      setResponseContent(res.data.message);
+      setLoading(false);
+    }).catch((err) => {
+      console.log("Search diary error!")
+      console.log(err);
+      setLoading(false);
+    })
   };
 
   return (

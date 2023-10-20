@@ -1,8 +1,12 @@
 const express = require('express')
-const Session = require('./model')
+const Session = require('./demo_model')
+const DiarySession = require('./diary_model')
 const OpenAIChat = require('./utils/openai')
+const DiaryOpenAIChat = require('./utils/diary_openai')
 
 const router = express.Router()
+
+// ------------DEMO------------------
 
 router.get("/test", (req, res) => {
   res.send({ msg: "you are amazing!" });
@@ -231,5 +235,177 @@ router.put('/session/:sessionId/messages', (req, res) => {
   })();
 
 })
+
+// ------------DIARY------------------
+
+// 創建Diary session.
+// @Author: 晴耘
+router.post('/createDiary/sessions', async (req, res) => {
+  const { user, content } = req.body;
+
+  if (!user || !content) {
+    return res.status(400).json({ error: 'User ID and content are required' });
+  }
+
+  try {
+    
+    const session = new DiarySession({
+      user,
+      content: [content], 
+      AIresponse: '',
+    });
+
+    const savedSession = await session.save();
+
+    const response = {
+      Diaryid: savedSession._id,
+      user: savedSession.user,
+      AIresponse: savedSession.AIresponse,
+      content: savedSession.content,
+      createdAt: savedSession.createdAt,
+    };
+
+    res.status(201).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// 按下儲存鍵，更新日記內容。
+// @Author: 庭瑋
+router.put('/updateDiary/session/:sessionId', (req, res) => {
+  const sessionId = req.params.sessionId;
+  const content = req.body.content
+
+  if (!sessionId || !content) {
+    res.status(400).send({
+      message: 'Session ID and content is required',
+    });
+    return;
+  }
+
+  console.log("New diary content:", content);
+
+  (async () => {
+    try {
+      const ses = await DiarySession.findByIdAndUpdate(sessionId, { $push: {content: content} }, {new: true}).select('_id user content createdAt');
+      if (!ses) {
+        res.status(404).send({
+          message: 'Session not found',
+        });
+        return;
+      }
+      res.send(ses);
+    } catch (error){
+      console.error(error);
+      if (error.name === 'CastError' || error.name === 'DocumentNotFoundError') {
+        res.status(404).send({
+          message: 'Session not found'
+        });
+      } else {
+        res.status(500).send({
+          message: 'Internal Server Error'
+        });
+      }
+    }
+  })();
+})
+
+// Use userId to search for all corresponding sessions.
+// @Author: 庭瑋
+router.get('/getAllSessions/users/:userId/sessions', (req, res) => {
+  const userId = req.params.userId;
+
+	if (!userId) {
+		res.status(400).send({
+			message: 'User ID is required',
+		});
+		return;
+	}
+
+  (async () => {
+    try {
+      const ses = await DiarySession.find({ user: userId }).select('_id user content createdAt');
+      res.send(ses);
+    } catch (error){
+      console.error(error);
+      res.status(500).send({
+        message: 'Internal Server Error'
+      });
+    }
+  })();
+
+})
+
+// Get the content of a Session by session ID
+// @Author: 晴耘
+router.get('/getSession/sessions/:sessionId', async (req, res) => {
+  const sessionId = req.params.sessionId;
+
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID is required' });
+  }
+
+  try {
+    const session = await DiarySession.findById(sessionId);
+
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+
+    const sessionData = {
+      Diaryid: session._id,
+      user: session.user,
+      AIresponse: session.AIresponse,
+      content: session.content,
+      createdAt: session.createdAt,
+    };
+
+    res.status(200).json(sessionData);
+  } catch (error) {
+    console.error(error);
+    if (error.name === 'CastError' || error.name === 'DocumentNotFoundError') {
+      res.status(404).json({ error: 'Session not found' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+});
+
+// OpenAIChat for MoodBlog.
+// @Author: 尚峰
+router.post('/getAIresponse/sessions/:sessionId/content', async (req, res) => {
+  const { user, content } = req.body;
+  const sessionId = req.params.sessionId;
+
+  console.log("User (from request body):", user);
+  console.log("Session ID (from request parameter):", sessionId);
+  console.log("Content (from request body):", content);
+
+  if (!user || !sessionId || !content) {
+      return res.status(400).json({ error: 'User ID, Session ID, and content are required' });
+  }
+
+  try {
+      const AIresponse = await DiaryOpenAIChat([content]);
+
+      const session = new DiarySession({
+          user,
+          content: content,
+          AIresponse: AIresponse,
+      });
+
+      const savedSession = await session.save();
+
+      console.log("Saved Session Data:", savedSession); 
+
+      res.json({ message: AIresponse });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;

@@ -3,7 +3,6 @@ const express = require('express')
 const path = require('path')
 const cors = require('cors')
 const api = require("./api")
-const api_sunny= require("./api_sunny")
 
 const mongoose = require('mongoose')
 
@@ -32,7 +31,6 @@ const PORT = 3000
 app.use(express.json())
 app.use(cors())
 app.use('/', api)
-app.use('/', api_sunny)
 
 // 如果需要設置CORS
 // const corsOptions = {
