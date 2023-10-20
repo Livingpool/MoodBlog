@@ -240,32 +240,29 @@ router.put('/session/:sessionId/messages', (req, res) => {
 
 // 創建Diary session.
 // @Author: 晴耘
-router.post('/createDiary/sessions', async (req, res) => {
-  const { user, content } = req.body;
+router.post('/createDiary', async (req, res) => {
+  const user = req.body.userId;
 
-  if (!user || !content) {
-    return res.status(400).json({ error: 'User ID and content are required' });
+  if (!user) {
+    return res.status(400).json({ error: 'User ID is required' });
   }
 
   try {
-    
     const session = new DiarySession({
-      user,
-      content: [content], 
-      AIresponse: '',
+      user: user
     });
 
-    const savedSession = await session.save();
+    session.save().then(data => {
+      const savedDocument = {
+        diaryId: data._id,
+        userId: data.user,
+        responseAi: data.AIresponse,
+        createdAt: data.createdAt,
+        content: data.content
+      };
+      res.send(savedDocument);
+    })
 
-    const response = {
-      Diaryid: savedSession._id,
-      user: savedSession.user,
-      AIresponse: savedSession.AIresponse,
-      content: savedSession.content,
-      createdAt: savedSession.createdAt,
-    };
-
-    res.status(201).json(response);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -274,8 +271,8 @@ router.post('/createDiary/sessions', async (req, res) => {
 
 // 按下儲存鍵，更新日記內容。
 // @Author: 庭瑋
-router.put('/updateDiary/session/:sessionId', (req, res) => {
-  const sessionId = req.params.sessionId;
+router.put('/updateDiary/:diaryId', (req, res) => {
+  const sessionId = req.params.diaryId;
   const content = req.body.content
 
   if (!sessionId || !content) {
@@ -289,14 +286,66 @@ router.put('/updateDiary/session/:sessionId', (req, res) => {
 
   (async () => {
     try {
-      const ses = await DiarySession.findByIdAndUpdate(sessionId, { $push: {content: content} }, {new: true}).select('_id user content createdAt');
+      const ses = await DiarySession.findByIdAndUpdate(sessionId, { $push: {content: content} }, {new: true}).select('_id user content createdAt AIresponse');
       if (!ses) {
         res.status(404).send({
           message: 'Session not found',
         });
         return;
       }
-      res.send(ses);
+      const savedDocument = {
+        diaryId: ses._id,
+        userId: ses.user,
+        responseAi: ses.AIresponse,
+        createdAt: ses.createdAt,
+        content: ses.content
+      }
+      res.send(savedDocument);
+    } catch (error){
+      console.error(error);
+      if (error.name === 'CastError' || error.name === 'DocumentNotFoundError') {
+        res.status(404).send({
+          message: 'Session not found'
+        });
+      } else {
+        res.status(500).send({
+          message: 'Internal Server Error'
+        });
+      }
+    }
+  })();
+})
+
+// 按下儲存鍵，更新日記內容AI回覆的部分，只會取代。
+// @Author: 庭瑋
+router.put('/updateDiaryResponseAi/:diaryId', (req, res) => {
+  const sessionId = req.params.diaryId;
+  const content = req.body.content
+
+  if (!sessionId || !content) {
+    res.status(400).send({
+      message: 'Session ID and content is required',
+    });
+    return;
+  }
+
+  (async () => {
+    try {
+      const ses = await DiarySession.findByIdAndUpdate(sessionId, { $set: {AIresponse: content} }, {new: true}).select('_id user content createdAt AIresponse');
+      if (!ses) {
+        res.status(404).send({
+          message: 'Session not found',
+        });
+        return;
+      }
+      const savedDocument = {
+        diaryId: ses._id,
+        userId: ses.user,
+        responseAi: ses.AIresponse,
+        createdAt: ses.createdAt,
+        content: ses.content
+      }
+      res.send(savedDocument);
     } catch (error){
       console.error(error);
       if (error.name === 'CastError' || error.name === 'DocumentNotFoundError') {
@@ -314,7 +363,7 @@ router.put('/updateDiary/session/:sessionId', (req, res) => {
 
 // Use userId to search for all corresponding sessions.
 // @Author: 庭瑋
-router.get('/getAllSessions/users/:userId/sessions', (req, res) => {
+router.get('/getAllSessions/:userId', (req, res) => {
   const userId = req.params.userId;
 
 	if (!userId) {
@@ -326,8 +375,19 @@ router.get('/getAllSessions/users/:userId/sessions', (req, res) => {
 
   (async () => {
     try {
-      const ses = await DiarySession.find({ user: userId }).select('_id user content createdAt');
-      res.send(ses);
+      const ses = await DiarySession.find({ user: userId }).select('_id user content createdAt AIresponse');
+      var array = [];
+      ses.forEach(data => {
+        const savedDocument = {
+          diaryId: data._id,
+          userId: data.user,
+          responseAi: data.AIresponse,
+          createdAt: data.createdAt,
+          content: data.content
+        };
+        array.push(savedDocument);
+      })
+      res.send(array);
     } catch (error){
       console.error(error);
       res.status(500).send({
@@ -340,7 +400,7 @@ router.get('/getAllSessions/users/:userId/sessions', (req, res) => {
 
 // Get the content of a Session by session ID
 // @Author: 晴耘
-router.get('/getSession/sessions/:sessionId', async (req, res) => {
+router.get('/getSession/:sessionId', async (req, res) => {
   const sessionId = req.params.sessionId;
 
   if (!sessionId) {
@@ -375,15 +435,15 @@ router.get('/getSession/sessions/:sessionId', async (req, res) => {
 
 // OpenAIChat for MoodBlog.
 // @Author: 尚峰
-router.post('/getAIresponse/sessions/:sessionId/content', async (req, res) => {
-  const { user, content } = req.body;
+router.post('/getAiResponse/:sessionId', async (req, res) => {
+  const { userId, content } = req.body;
   const sessionId = req.params.sessionId;
 
-  console.log("User (from request body):", user);
-  console.log("Session ID (from request parameter):", sessionId);
-  console.log("Content (from request body):", content);
+  // console.log("User (from request body):", user);
+  // console.log("Session ID (from request parameter):", sessionId);
+  // console.log("Content (from request body):", content);
 
-  if (!user || !sessionId || !content) {
+  if (!userId || !sessionId || !content) {
       return res.status(400).json({ error: 'User ID, Session ID, and content are required' });
   }
 
@@ -391,7 +451,7 @@ router.post('/getAIresponse/sessions/:sessionId/content', async (req, res) => {
       const AIresponse = await DiaryOpenAIChat([content]);
 
       const session = new DiarySession({
-          user,
+          user: userId,
           content: content,
           AIresponse: AIresponse,
       });
