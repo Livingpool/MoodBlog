@@ -65,7 +65,7 @@ export default function CalendarPage() {
         <div className="flex items-center mt-10">
           <Button
             className="mr-4"
-            // onClick={handleButtonClick}
+            
             onClick={() => searchDiaryHandler(user, formatDate(date))
            
               // Swal.fire({
