@@ -1,7 +1,7 @@
 // for Code-Your-Stage students:
 // uncomment 'Clerk' Provider and then fill your key into .env to enable clerk feature
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import {
   ClerkProvider,
@@ -11,6 +11,8 @@ import {
   SignIn,
   SignUp
 } from "@clerk/clerk-react";
+
+import CalendarPage from "./pages/Form/Calendar";
 
 import "./css/style.css";
 
@@ -25,12 +27,13 @@ import Table from "./pages/Table";
 import Form from "./pages/Form";
 import FormFile from "./pages/Form/File";
 import Calendar from "./pages/Form/Calendar";
+
 import Modal from "./pages/MUI/Modal";
 import Pagination from "./pages/MUI/Pagination";
 import Carousel from "./pages/MUI/Carousel";
 import Hook from "./pages/Hook";
 import Welcome from "./pages/moodblog/Welcome";
-import Newpage from "./pages/moodblog/Newpage";
+
 import EditDiary from "./pages/moodblog/EditDiary";
 import AiFeedback from "./pages/moodblog/AiFeedback";
 import Ai from "./pages/moodblog/Ai";
@@ -43,7 +46,7 @@ const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 function App() {
   const location = useLocation();
-
+ 
   useEffect(() => {
     document.querySelector("html").style.scrollBehavior = "auto";
     window.scroll({ top: 0 });
@@ -54,7 +57,7 @@ function App() {
     <ClerkProvider publishableKey={clerkPubKey}>
     <Routes>
       <Route exact path="/" element={<Welcome />} />
-      <Route exact path="/new" element={<Newpage />} />
+      
       <Route 
         exact path="/edit" 
         // element={<EditDiary />} 
@@ -76,7 +79,7 @@ function App() {
       <Route exact path="/zoo/table" element={<Table />} />
       <Route exact path="/zoo/form/typical" element={<Form />} />
       <Route exact path="/zoo/form/file" element={<FormFile />} />
-      <Route 
+      <Route
         exact path="/zoo/form/calendar" 
         // element={<Calendar />} 
         element={
@@ -90,6 +93,8 @@ function App() {
           </>
         }
       />
+      
+      
       <Route exact path="/zoo/mui/modal" element={<Modal />} />
       <Route exact path="/zoo/mui/pagination" element={<Pagination />} />
       <Route exact path="/zoo/mui/carousel" element={<Carousel />} />
