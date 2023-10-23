@@ -15,7 +15,7 @@ export default function CalendarPage() {
   const [responseContent, setResponseContent] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [diaryContentsForSelectedDate, setDiaryContentsForSelectedDate] = useState([]);
-  
+
   // Clerk user.
   const { user } = useUser();
 
@@ -26,27 +26,27 @@ export default function CalendarPage() {
     const day = localDate.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-  
+
   const searchDiaryHandler = (user, selectedDate) => {
     console.log("user: ", user.id)
     setLoading(true)
     axios.get(`http://localhost:3000/getAllSessions/${user.id}`)
-    .then((res) => {
-      console.log("All diaries: ",res.data)
-      const filteredDiaries = res.data.filter(entry => entry.createdAt.includes(selectedDate))
-      // console.log(filteredDiaries)
-      // // Extract the diary IDs from the filtered entries.
-      // const diaryContents = filteredDiaries.map(entry => entry.content)
-      // console.log(typeof(diaryIds))
-      setDiaryContentsForSelectedDate(filteredDiaries)
-      console.log("date:", selectedDate, "diary Contents: ", filteredDiaries)
-      setIsModalOpen(true)
-      setLoading(false)
-    }).catch((err) => {
-      console.log("Search diary error!")
-      console.log(err)
-      setLoading(false)
-    })
+      .then((res) => {
+        console.log("All diaries: ", res.data)
+        const filteredDiaries = res.data.filter(entry => entry.createdAt.includes(selectedDate))
+        // console.log(filteredDiaries)
+        // // Extract the diary IDs from the filtered entries.
+        // const diaryContents = filteredDiaries.map(entry => entry.content)
+        // console.log(typeof(diaryIds))
+        setDiaryContentsForSelectedDate(filteredDiaries)
+        console.log("date:", selectedDate, "diary Contents: ", filteredDiaries)
+        setIsModalOpen(true)
+        setLoading(false)
+      }).catch((err) => {
+        console.log("Search diary error!")
+        console.log(err)
+        setLoading(false)
+      })
   };
   useEffect(() => {
     console.log("Diary IDs updated:", diaryContentsForSelectedDate);
@@ -65,9 +65,9 @@ export default function CalendarPage() {
         <div className="flex items-center mt-10">
           <Button
             className="mr-4"
-            
+
             onClick={() => searchDiaryHandler(user, formatDate(date))
-           
+
               // Swal.fire({
               //   title: "似乎沒有留下日記呢",
               //   text: `你選擇的日期為 ${formatDate(date)}`
@@ -75,7 +75,7 @@ export default function CalendarPage() {
             }
           >
             查看日記
-          </Button> 
+          </Button>
           <Modal
             open={isModalOpen}
             onClose={closeModal}
@@ -98,17 +98,17 @@ export default function CalendarPage() {
                 </div>
               ))}
 
-              
+
               {/* Close Button */}
               <div className="mt-4 text-right">
                 <button onClick={closeModal} className="text-blue-500 hover:text-blue-700">Close</button>
               </div>
-              </div>
+            </div>
           </Modal>
         </div>
       </div>
-      
-  
+
+
     </Layout>
   );
 }

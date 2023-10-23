@@ -49,5 +49,10 @@
     "prettier-eslint": "^15.0.1",
     "tailwindcss": "^3.3.3",
     "vite": "^4.4.11"
-  }
+  },
+  "description": "Please run below in terminal after you pull the repo",
+  "main": "postcss.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

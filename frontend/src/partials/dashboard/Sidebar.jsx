@@ -1,11 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import axios from 'axios'
+import { useUser } from "@clerk/clerk-react";
 
 import { HomeIcon } from "@heroicons/react/24/solid";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import { calendar, chart, messages, square, starshine, task } from "../../data/icons";
 import Icon from "../../components/Icon";
 // import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+
+
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const sitemap = [
@@ -19,64 +23,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       path: "zoo/form/calendar",
       svgMeta: calendar,
     },
-    // {
-    //   title: "Chart",
-    //   path: "chart",
-    //   svgMeta: chart
-    // },
-    // {
-    //   title: "Chat",
-    //   path: "chat",
-    //   svgMeta: messages
-    // },
-    // {
-    //   title: "React Hook",
-    //   path: "hook",
-    //   svgMeta: task
-    // },
-    // {
-    //   title: "Form",
-    //   path: "form",
-    //   svgMeta: calendar,
-    //   sublinks: [
-    //     {
-    //       title: "typical",
-    //       path: "typical"
-    //     },
-    //     {
-    //       title: "file",
-    //       path: "file"
-    //     },
-    //     {
-    //       title: "calendar",
-    //       path: "calendar"
-    //     },
-    //   ]
-    // },
-    // {
-    //   title: "Table",
-    //   path: "table",
-    //   svgMeta: square
-    // },
-    // {
-    //   title: "MUI",
-    //   path: "mui",
-    //   svgMeta: starshine,
-    //   sublinks: [
-    //     {
-    //       title: "modal",
-    //       path: "modal"
-    //     },
-    //     {
-    //       title: "pagination",
-    //       path: "pagination"
-    //     },
-    //     {
-    //       title: "carousel",
-    //       path: "carousel"
-    //     },
-    //   ]
-    // },
   ];
 
   const location = useLocation();
@@ -84,6 +30,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
+
+  // Clerk user.
+  const { user } = useUser();
 
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
   const [sidebarExpanded, setSidebarExpanded] = useState(
@@ -125,13 +74,38 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
     }
   }, [sidebarExpanded]);
 
+  // const handleNavLinkClick = () => {
+  //   // console.log("user:",user);
+  //   // 在這裡執行 API 請求
+  //   const requestData = {
+  //     userId: user.id // 使用 Clerk 提供的使用者 ID
+  //   };
+
+  //   // 在這裡執行 API 請求
+  //   console.log(requestData);
+  //   fetch('http://localhost:3000/createDiary', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(requestData)
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // 在這裡處理 API 回應
+  //       console.log(data);
+  //     })
+  //     .catch(error => {
+  //       console.error('API 呼叫失敗：', error);
+  //     });
+  // };
+
   return (
     <div>
       {/* Sidebar backdrop (mobile only) */}
       <div
-        className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         aria-hidden="true"
       />
 
@@ -139,9 +113,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       <div
         id="sidebar"
         ref={sidebar}
-        className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-amber-600 p-4 transition-all duration-200 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
-        }`}
+        className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-amber-600 p-4 transition-all duration-200 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-64"
+          }`}
       >
         {/* Sidebar header */}
         <div className="flex justify-between mb-2 pr-3 sm:px-2">
@@ -194,11 +167,10 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       <>
                         <a
                           href="#0"
-                          className={`block text-orange-950 truncate transition duration-150 ${
-                            pathname.includes(category.path)
-                              ? "hover:text-slate-200"
-                              : "hover:text-white"
-                          }`}
+                          className={`block text-orange-950 truncate transition duration-150 ${pathname.includes(category.path)
+                            ? "hover:text-slate-200"
+                            : "hover:text-white"
+                            }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -219,9 +191,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             {/* arrow */}
                             <div className="flex shrink-0 ml-2">
                               <svg
-                                className={`w-3 h-3 shrink-0 ml-1 fill-current text-orange-950 ${
-                                  open && "rotate-180"
-                                }`}
+                                className={`w-3 h-3 shrink-0 ml-1 fill-current text-orange-950 ${open && "rotate-180"
+                                  }`}
                                 viewBox="0 0 12 12"
                               >
                                 <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
@@ -237,10 +208,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                   end
                                   to={`/zoo/${category.path}/${subCategory.path}`}
                                   className={({ isActive }) =>
-                                    `block transition duration-150 truncate ${
-                                      isActive
-                                        ? "text-orange-950"
-                                        : "text-slate-400 hover:text-slate-200"
+                                    `block transition duration-150 truncate ${isActive
+                                      ? "text-orange-950"
+                                      : "text-slate-400 hover:text-slate-200"
                                     }`
                                   }
                                 >
@@ -257,18 +227,16 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   </SidebarLinkGroup>
                 ) : (
                   <li
-                    className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
-                      pathname.includes(category.path) && "bg-orange-600/75"
-                    }`}
+                    className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${pathname.includes(category.path) && "bg-orange-600/75"
+                      }`}
                   >
                     <NavLink
                       end
                       to={`/${category.path}`}
-                      className={`block text-orange-950 truncate transition duration-150 font-medium ${
-                        pathname.includes(category.path)
-                          ? "hover:text-slate-200"
-                          : "hover:text-white"
-                      }`}
+                      className={`block text-orange-950 truncate transition duration-150 font-medium ${pathname.includes(category.path)
+                        ? "hover:text-slate-200"
+                        : "hover:text-white"
+                        }`}
                     >
                       <div className="flex items-center">
                         <Icon path={category.path} meta={category.svgMeta} />
