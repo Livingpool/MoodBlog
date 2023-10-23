@@ -435,7 +435,7 @@ router.get('/getSession/:sessionId', async (req, res) => {
 
 // OpenAIChat for MoodBlog.
 // @Author: 尚峰
-router.post('/getAiResponse/:sessionId', async (req, res) => {
+router.post('/getAiResponse/:diaryId', async (req, res) => {
   const { userId, content } = req.body;
   const sessionId = req.params.sessionId;
 
