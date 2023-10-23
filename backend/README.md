@@ -12,7 +12,7 @@ Response: {
 }
 
 ## Update Diary Content API ##
-### PUT `http://localhost:3000/updateDiary/:sessionId` ###
+### PUT `http://localhost:3000/updateDiary/:diaryId` ###
 Request:       
 {          
 &emsp;&emsp;content: "我今天過得不錯！公館夜市阿二鹹水雞超好吃推推～"    
@@ -27,7 +27,7 @@ Response: {
 }   
 
 ## Update Diary AI response (replace existing response) API ##
-### PUT `http://localhost:3000/updateDiaryResponseAi/:sessionId` ###
+### PUT `http://localhost:3000/updateDiaryResponseAi/:diaryId` ###
 Request:       
 {          
 &emsp;&emsp;content: "假的AI回覆"    
@@ -70,7 +70,7 @@ Response:[
 ]
 
 ## Get AI Response from OpenAI API ##
-### POST `http://localhost:3000/getAiResponse/:sessionId` ###
+### POST `http://localhost:3000/getAiResponse/:diaryId` ###
 Request:       
 {          
 &emsp;&emsp;"userId":"user_1234567"  
