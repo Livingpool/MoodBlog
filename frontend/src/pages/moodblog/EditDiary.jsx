@@ -113,83 +113,101 @@ export default function EditDiary() {
   //   console.log("kkk");
   //   handleNavLinkClick();
   // }, [user]);
-
   return (
-    <Layout>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div className='pt-8 pb-4 font-semibold text-xl'>撰寫日記 - {formattedDate}</div>
+<Layout>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: "#FFFAF0", width: '100%', minHeight: '100vh', padding: '20px 0' }}>
+        <div className='pt-8 pb-4 font-semibold text-xl' style={{ color: "#FF8C00" }}>撰寫日記 - {formattedDate}</div>
         <TextArea
-          showCount
-          maxLength={300}
-          style={{
-            width: 800,
-            height: 200,
-            marginBottom: 18,
-          }}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="今天發生了什麼呢？"
-        />
+    showCount
+    maxLength={300}
+    style={{
+        width: 800,
+        height: 200,
+        marginBottom: 18,
+        backgroundColor: "#FFF8DC", 
+        borderColor: "#FFEBAD", 
+        color: "#6b442a", 
+        borderRadius: '15px', 
+        boxShadow: '0 4px 6px rgba(0,0,0, 0.1)',
+        padding: '15px', 
+        transition: 'box-shadow 0.3s ease-in-out',
+        fontSize: '1rem' 
+    }}
+    onChange={(e) => setText(e.target.value)}
+    placeholder="今天發生了什麼呢？"
+    onFocus={() => {
+   
+        this.style.boxShadow = '0 6px 8px rgba(0,0,0, 0.15)';
+    }}
+    onBlur={() => {
+      this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+    }}
+/>
+
         <div className="flex flex-col w-full items-center justify-center gap-5 mt-12 mb-20 px-5">
-          <div className="flex items-center gap-5">
-            <button onClick={() => {
-              handleNavLinkClick();
-            }} className="text-pink-100 font-semibold text-xl rounded-lg bg-orange-600/95
-            hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '55px', width: '60px'}}>
-              儲存
-            </button>
-            {responseContent && (
-              <div className="flex items-center gap-5">
-                <button
-                  className="px-1 py-1 text-pink-100 font-semibold text-xl rounded-lg bg-orange-600/95 hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75"
-                  style={{ height: '55px', width: '70px' }}
-                  onClick={() => AIHandler(text)}
-                >
-                  AI 聊聊
+            <div className="flex items-center gap-5">
+                <button onClick={() => {
+                    handleNavLinkClick();
+                }} className="text-white font-semibold text-xl rounded-lg shadow-md hover:shadow-lg transform transition-transform duration-150
+                hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '55px', width: '60px', backgroundColor: "#FF6347", borderColor: "#FF4500" }}>
+                    儲存
                 </button>
-              </div>
-            )}
-          </div>
+                {responseContent && (
+                    <div className="flex items-center gap-5">
+                        <button
+                            className="px-1 py-1 text-white font-semibold text-xl rounded-lg shadow-md hover:shadow-lg transform transition-transform duration-150"
+                            style={{ height: '55px', width: '70px', backgroundColor: "#FF6347", borderColor: "#FF4500" }}
+                            onClick={() => AIHandler(text)}
+                        >
+                            AI 聊聊
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
+
         {loading && (
-          <div
-            style={{
-              width: 800,
-              height: 200,
-              marginBottom: 18,
-              border: "1px solid #ccc",
-              padding: "10px",
-              borderRadius: "7px",
-              backgroundColor: "white",
-              color: "black",
-              wordWrap: "break-word",
-              overflow: "auto",
-            }}
-          >
-            Loading...
-          </div>
+            <div
+                style={{
+                  width: 800,
+                  height: 200,
+                  marginBottom: 18,
+                  backgroundColor: "#FFF8DC", 
+                  borderColor: "#FFEBAD", 
+                  color: "#6b442a", 
+                  borderRadius: '15px', 
+                  boxShadow: '0 4px 6px rgba(0,0,0, 0.1)',
+                  padding: '15px', 
+                  transition: 'box-shadow 0.3s ease-in-out',
+                  fontSize: '1rem' 
+                }}
+            >
+                Loading...
+            </div>
         )}
 
         {!loading && aiResponseContent && (
-          <div
-            style={{
-              width: 800,
-              height: 200,
-              marginBottom: 18,
-              border: "1px solid #ccc",
-              padding: "10px",
-              borderRadius: "7px",
-              backgroundColor: "white",
-              color: "black",
-              wordWrap: "break-word",
-              overflow: "auto",
-            }}
-          >
-            {aiResponseContent}
-          </div>
+            <div
+                style={{
+                  width: 800,
+                  height: 200,
+                  marginBottom: 18,
+                  backgroundColor: "#FFF8DC", 
+                  borderColor: "#FFEBAD", 
+                  color: "#6b442a", 
+                  borderRadius: '15px', 
+                  boxShadow: '0 4px 6px rgba(0,0,0, 0.1)',
+                  padding: '15px', 
+                  transition: 'box-shadow 0.3s ease-in-out',
+                  fontSize: '1rem' 
+                }}
+            >
+                {aiResponseContent}
+            </div>
         )}
 
+    </div>
+</Layout>
 
-      </div>
-    </Layout >
   );
 }
