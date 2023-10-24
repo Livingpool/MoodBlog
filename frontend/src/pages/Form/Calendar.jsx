@@ -32,7 +32,7 @@ export default function CalendarPage() {
     setLoading(true)
     axios.get(`http://localhost:3000/getAllSessions/${user.id}`)
       .then((res) => {
-        console.log("All diaries: ", res.data)
+        // console.log("All diaries: ", res.data)
         const filteredDiaries = res.data.filter(entry => entry.createdAt.includes(selectedDate))
         // console.log(filteredDiaries)
         // // Extract the diary IDs from the filtered entries.
@@ -80,7 +80,7 @@ export default function CalendarPage() {
             open={isModalOpen}
             onClose={closeModal}
           >
-            <div className="modal-content p-4 bg-white rounded-lg shadow-md w-1/2 mx-auto">
+            <div className="overflow-y-auto modal-content p-4 bg-white rounded-lg shadow-md w-1/2 mx-auto h-2/3 my-12">
               {/* Header */}
               <div className="text-xl font-bold mb-4">{formatDate(date)} Diary Content</div>
 

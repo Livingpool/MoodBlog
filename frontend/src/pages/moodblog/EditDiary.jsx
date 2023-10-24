@@ -13,6 +13,8 @@ export default function EditDiary() {
   const [responseContent, setResponseContent] = useState(null);
   const [aiResponseContent, setAIResponseContent] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [diaryCreatedToday, setDiaryCreatedToday] = useState(false); 
+
 
 
 
@@ -26,26 +28,33 @@ export default function EditDiary() {
   // console.log("diaryId: ", diaryId);
 
   const handleNavLinkClick = async () => {
-    const requestData = {
-      userId: user.id
-    };
+    if (diaryCreatedToday) {
+      // 如果已经创建了今天的日记，只更新会话
+      UpdateSession(diaryId, text);
+    } else {
+      // 否则，创建新的日记
+      const requestData = {
+        userId: user.id
+      };
   
-    fetch('http://localhost:3000/createDiary', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("createDiaryData", data);
-        // 在這裡調用UpdateSession，將diaryId傳入
-        UpdateSession(data.diaryId, text);
+      fetch('http://localhost:3000/createDiary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
       })
-      .catch(error => {
-        console.error('API 呼叫失敗：', error);
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log("createDiaryData", data);
+          setDiaryCreatedToday(true); // 设置为已创建今天的日记
+          setDiaryId(data.diaryId);
+          UpdateSession(data.diaryId, text);
+        })
+        .catch(error => {
+          console.error('API 呼叫失敗：', error);
+        });
+    }
   };
   
 
@@ -76,7 +85,7 @@ export default function EditDiary() {
 
   // 處理AI chat API call.
   const AIHandler = (content) => {
-    setLoading(true); // 设置 loading 为 true，表示加载中
+    setLoading(true); // set loading as true
   
     console.log("user:", user.id);
     console.log("content:", content);
@@ -89,12 +98,12 @@ export default function EditDiary() {
     })
     .then((res) => {
       console.log("AI response: ", res.data);
-      setAIResponseContent(res.data.message); // 设置 aiResponseContent
-      setLoading(false); // 加载完成后，设置 loading 为 false
+      setAIResponseContent(res.data.message); // set aiResponseContent
+      setLoading(false); // after finishing loading, set the loading as false
     })
     .catch((err) => {
       console.log("AI Handler error:", err);
-      setLoading(false); // 处理错误后，设置 loading 为 false
+      setLoading(false); // after finishing loading, set the loading as false
     });
   };
   
