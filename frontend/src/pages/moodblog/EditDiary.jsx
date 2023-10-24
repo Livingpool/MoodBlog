@@ -16,8 +16,6 @@ export default function EditDiary() {
   const [diaryCreatedToday, setDiaryCreatedToday] = useState(false); 
 
 
-
-
   // Clerk user.
   const { user } = useUser();
 

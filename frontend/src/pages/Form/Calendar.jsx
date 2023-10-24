@@ -91,9 +91,15 @@ export default function CalendarPage() {
               ))} */}
               {diaryContentsForSelectedDate.map((entry, index) => (
                 <div key={index} className="p-4 mb-4 border border-gray-300 rounded-lg">
-                  <p className="text-gray-700">{entry.content}</p>
+                  <p className="text-gray-700">
+                    {Array.isArray(entry.content)
+                      ? entry.content[entry.content.length - 1]
+                      : entry.content}
+                  </p>
                   {entry.responseAi && (
-                    <p className="text-amber-600 font-semibold mt-2">Response AI: {entry.responseAi}</p>
+                    <p className="text-amber-600 font-semibold mt-2">
+                      Response AI: {entry.responseAi}
+                    </p>
                   )}
                 </div>
               ))}
