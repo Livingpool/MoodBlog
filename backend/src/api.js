@@ -436,15 +436,23 @@ router.get('/getSession/:sessionId', async (req, res) => {
 // OpenAIChat for MoodBlog.
 // @Author: 尚峰
 router.post('/getAiResponse/:diaryId', async (req, res) => {
-  const { userId, content } = req.body;
-  const sessionId = req.params.sessionId;
+  const { userId, content, } = req.body;
+  const sessionId = req.params.diaryId;
 
   // console.log("User (from request body):", user);
   // console.log("Session ID (from request parameter):", sessionId);
   // console.log("Content (from request body):", content);
 
-  if (!userId || !sessionId || !content) {
-      return res.status(400).json({ error: 'User ID, Session ID, and content are required' });
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+  
+  if (!sessionId) {
+    return res.status(400).json({ error: 'Session ID is required' });
+  }
+  
+  if (!content) {
+    return res.status(400).json({ error: 'Content is required' });
   }
 
   try {

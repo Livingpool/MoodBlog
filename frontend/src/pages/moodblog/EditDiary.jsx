@@ -11,6 +11,7 @@ export default function EditDiary() {
   const [data, setData] = useState(null)
   const [diaryId, setDiaryId] = useState(null);
   const [responseContent, setResponseContent] = useState(null);
+  const [aiResponseContent, setAIResponseContent] = useState(null);
   const [loading, setLoading] = useState(false);
 
 
@@ -25,14 +26,10 @@ export default function EditDiary() {
   // console.log("diaryId: ", diaryId);
 
   const handleNavLinkClick = async () => {
-    // console.log("user:", user);
-    // 在這裡執行 API 請求
     const requestData = {
-      userId: user.id // 使用 Clerk 提供的使用者 ID
+      userId: user.id
     };
-
-    // 在這裡執行 API 請求
-    console.log("userId:", requestData);
+  
     fetch('http://localhost:3000/createDiary', {
       method: 'POST',
       headers: {
@@ -42,58 +39,67 @@ export default function EditDiary() {
     })
       .then(response => response.json())
       .then(data => {
-        // 在這裡處理 API 回應
-        console.log("dataInHandle", data);
+        console.log("createDiaryData", data);
+        // 在這裡調用UpdateSession，將diaryId傳入
+        UpdateSession(data.diaryId, text);
       })
       .catch(error => {
         console.error('API 呼叫失敗：', error);
       });
   };
+  
 
 
-  const UpdateSession = (content) => {
+  const UpdateSession = (diaryId, content) => {
     console.log("content: ", content);
+    console.log("diaryId: ", diaryId);
     if (diaryId) {
-      console.log("diaryid: ", diaryId);
-      axios.put(`http://localhost:3000/updateDiaryResponseAi/${diaryId}`, {
+      axios.put(`http://localhost:3000/updateDiary/${diaryId}`, {
         content: content
       })
         .then((res) => {
           console.log("Session data: ", res.data);
-          setDiaryId(res.data.Diaryid);
-        }).catch((err) => {
-          console.log("Create session error: ", err);
+          setDiaryId(res.data.diaryId);
+          setResponseContent(res.data.content);
+        })
+        .catch((err) => {
+          console.log("Update session error: ", err);
         });
     } else {
       console.log("diaryId is null or undefined");
     }
   };
+  
 
 
 
 
   // 處理AI chat API call.
-  const AIHandler = (diaryId, user, content, createdAt) => {
-    setLoading(true);
-    console.log(diaryId);
-    console.log(user);
-    console.log(content);
-    console.log(createdAt);
-    axios.post(`http://localhost:3000/getAiResponse/:diaryId`, {
-      user: user.id,
+  const AIHandler = (content) => {
+    setLoading(true); // 设置 loading 为 true，表示加载中
+  
+    console.log("user:", user.id);
+    console.log("content:", content);
+    console.log("diaryId:", diaryId);
+    const url = `http://localhost:3000/getAiResponse/${diaryId}`;
+    
+    axios.post(url, {
+      userId: user.id,
       content: content,
-      createdAt: createdAt,
-      diaryId: diaryId,
-    }).then((res) => {
-      console.log("AI repsonse: ", res.data);
-      setResponseContent(res.data.message);
-      setLoading(false);
-    }).catch((err) => {
-      console.log("AI Handler error!")
-      console.log(err);
-      setLoading(false);
     })
+    .then((res) => {
+      console.log("AI response: ", res.data);
+      setAIResponseContent(res.data.message); // 设置 aiResponseContent
+      setLoading(false); // 加载完成后，设置 loading 为 false
+    })
+    .catch((err) => {
+      console.log("AI Handler error:", err);
+      setLoading(false); // 处理错误后，设置 loading 为 false
+    });
   };
+  
+
+  
 
   // useEffect(() => {
   //   if (!user) return;
@@ -123,7 +129,6 @@ export default function EditDiary() {
           <div className="self-stretch flex flex-col w-[89px]">
             <button onClick={() => {
               handleNavLinkClick();
-              UpdateSession(text);
             }} className="text-pink-100 font-semibold rounded-lg bg-orange-600/95
             hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '40px' }}>
               儲存
@@ -133,7 +138,7 @@ export default function EditDiary() {
                 <button
                   className="mt-2 text-pink-100 font-semibold rounded-lg bg-orange-600/95 hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75"
                   style={{ height: '40px' }}
-                  onClick={() => AIHandler(diaryId, user, text)}
+                  onClick={() => AIHandler(text)}
                 >
                   AI 聊聊
                 </button>
@@ -142,24 +147,45 @@ export default function EditDiary() {
 
           </div>
         </div>
-        {responseContent && (
+        {loading && (
           <div
-            maxLength={300}
             style={{
               width: 800,
               height: 200,
               marginBottom: 18,
               border: "1px solid #ccc",
               padding: "10px",
-              borderRadius: "7px", // Use 'borderRadius' for inline styles
+              borderRadius: "7px",
               backgroundColor: "white",
-              color: "black", // Specify the text color
-              wordWrap: 'break-word', // This allows long words to break and wrap
-              overflow: 'auto',
-            }}>
-            {loading ? "Loading..." : (responseContent ? responseContent : "Some error occurred:(")}
+              color: "black",
+              wordWrap: "break-word",
+              overflow: "auto",
+            }}
+          >
+            Loading...
           </div>
         )}
+
+        {!loading && aiResponseContent && (
+          <div
+            style={{
+              width: 800,
+              height: 200,
+              marginBottom: 18,
+              border: "1px solid #ccc",
+              padding: "10px",
+              borderRadius: "7px",
+              backgroundColor: "white",
+              color: "black",
+              wordWrap: "break-word",
+              overflow: "auto",
+            }}
+          >
+            {aiResponseContent}
+          </div>
+        )}
+
+
       </div>
     </Layout >
   );
