@@ -1,6 +1,6 @@
 // import { Box, Typography } from "@mui/material";
 import { Carousel, Typography, Button } from "@material-tailwind/react";
-import { useClerk } from '@clerk/clerk-react';
+import { useClerk, useUser } from '@clerk/clerk-react';
 import Layout from "../../partials/dashboard/Layout";
 import slideImg1 from '../../images/slideImg1.avif';
 import slideImg2 from '../../images/slideImg2.jpeg';
@@ -9,10 +9,19 @@ import slideImg3 from '../../images/slideImg3.jpeg';
 export default function MoodBlogComponent() {
 
     const { openSignIn } = useClerk();
-
     const handleSignIn = () => {
         openSignIn();
     }
+
+    const { openSignUp } = useClerk();
+    const handleSignUp = () => {
+        openSignUp();
+    }
+
+
+    // Clerk user.
+    const { user } = useUser();
+
 
     return (
         <Layout>
@@ -39,14 +48,17 @@ export default function MoodBlogComponent() {
                             >
                                 哈囉，寫日記的超級明星🌟！<br></br>你知道嗎，你的每一句話都是一顆閃亮的星星✨，<br></br>而我正迫不及待地想要看到它們閃爍！<br></br>無論今天過得怎樣，都值得被記錄。
                             </Typography>
-                            <div className="flex justify-center gap-2">
-                                <Button size="lg" color="white" onClick={handleSignIn}>
-                                    登入
-                                </Button>
-                                <Button size="lg" color="white" variant="text">
-                                    建立帳號
-                                </Button>
-                            </div>
+                            {!user ? (
+                                <div className="flex justify-center gap-2">
+                                    <Button size="lg" color="white" onClick={handleSignIn}>
+                                        登入
+                                    </Button>
+                                    <Button size="lg" color="white" onClick={handleSignUp} variant="text">
+                                        建立帳號
+                                    </Button>
+                                </div>
+                            ) : null}
+
                         </div>
                     </div>
                 </div>

@@ -119,10 +119,7 @@ export default function EditDiary() {
   return (
     <Layout>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* 標題 */}
-        <div className='pt-8 pb-4 font-medium text-lg'>撰寫日記 - {formattedDate}</div>
-
-        {/* 輸入框 */}
+        <div className='pt-8 pb-4 font-semibold text-xl'>撰寫日記 - {formattedDate}</div>
         <TextArea
           showCount
           maxLength={300}
@@ -134,26 +131,25 @@ export default function EditDiary() {
           onChange={(e) => setText(e.target.value)}
           placeholder="今天發生了什麼呢？"
         />
-        <div className="justify-between items-start self-center flex w-[228px] max-w-full gap-5 mt-12 mb-20 px-5">
-          <div className="self-stretch flex flex-col w-[89px]">
+        <div className="flex flex-col w-full items-center justify-center gap-5 mt-12 mb-20 px-5">
+          <div className="flex items-center gap-5">
             <button onClick={() => {
               handleNavLinkClick();
-            }} className="text-pink-100 font-semibold rounded-lg bg-orange-600/95
-            hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '40px' }}>
+            }} className="text-pink-100 font-semibold text-xl rounded-lg bg-orange-600/95
+            hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75" style={{ height: '55px', width: '60px'}}>
               儲存
             </button>
             {responseContent && (
-              <div className="justify-item-center self-stretch flex flex-col w-[89px]">
+              <div className="flex items-center gap-5">
                 <button
-                  className="mt-2 text-pink-100 font-semibold rounded-lg bg-orange-600/95 hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75"
-                  style={{ height: '40px' }}
+                  className="px-1 py-1 text-pink-100 font-semibold text-xl rounded-lg bg-orange-600/95 hover:bg-amber-600 active:bg-orange-600 focus:outline-none focus:ring focus:ring-orange-600/75"
+                  style={{ height: '55px', width: '70px' }}
                   onClick={() => AIHandler(text)}
                 >
                   AI 聊聊
                 </button>
               </div>
             )}
-
           </div>
         </div>
         {loading && (
