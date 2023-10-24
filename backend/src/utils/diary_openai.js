@@ -29,7 +29,7 @@ const diaryOpenAIChat = async (messages) => {
         const completion = await openai.chat.completions.create({
             messages: messagesWithSystemMsg, // 使用包含系统消息的数组
             model: 'gpt-3.5-turbo',
-            max_tokens: 200,
+            max_tokens: 500,
             temperature: 0.9,
         });
 
