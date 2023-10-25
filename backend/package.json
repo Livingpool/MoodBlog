@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Request:    {         &emsp;&emsp;userId: \"user_1234567\"     }   Response: {   &emsp;&emsp;\"diaryId\":\"65326ade38d1122f7f46528e\",   &emsp;&emsp;\"userId\":\"user_1234567\",   &emsp;&emsp;\"createdAt\":\"2023-10-20T11:56:14.693Z\",   &emsp;&emsp;\"content\":[]   }",
-  "main": "src/server.js",
+  "main": "app.js",
   "scripts": {
     "start:dev": "nodemon src/server.js"
   },
