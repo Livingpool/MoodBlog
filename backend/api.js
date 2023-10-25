@@ -436,44 +436,46 @@ router.get('/getSession/:sessionId', async (req, res) => {
 // OpenAIChat for MoodBlog.
 // @Author: 尚峰
 router.post('/getAiResponse/:diaryId', async (req, res) => {
-  const { userId, content, } = req.body;
+  const { userId, content } = req.body;
   const sessionId = req.params.diaryId;
-
-  // console.log("User (from request body):", user);
-  // console.log("Session ID (from request parameter):", sessionId);
-  // console.log("Content (from request body):", content);
 
   if (!userId) {
     return res.status(400).json({ error: 'User ID is required' });
   }
-  
+
   if (!sessionId) {
     return res.status(400).json({ error: 'Session ID is required' });
   }
-  
+
   if (!content) {
     return res.status(400).json({ error: 'Content is required' });
   }
 
   try {
-      const AIresponse = await DiaryOpenAIChat([content]);
+    const AIresponse = await DiaryOpenAIChat([content]);
 
-      const session = new DiarySession({
-          user: userId,
+    // 找到最後一筆資料，並更新內容
+    const updatedSession = await DiarySession.findOneAndUpdate(
+      { _id: sessionId },
+      {
+        $set: {
           content: content,
           AIresponse: AIresponse,
-      });
+        },
+      },
+      { new: true }
+    );
 
-      const savedSession = await session.save();
+    console.log("Updated Session Data:", updatedSession);
 
-      console.log("Saved Session Data:", savedSession); 
-
-      res.json({ message: AIresponse });
+    res.json({ message: AIresponse });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: error.message });
   }
 });
+
+
 
 
 module.exports = router;
