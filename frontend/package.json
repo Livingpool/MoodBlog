@@ -53,5 +53,6 @@
   "description": "Please run below in terminal after you pull the repo",
   "main": "postcss.config.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "keywords": []
 }

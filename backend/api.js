@@ -1,8 +1,8 @@
 const express = require('express')
-const Session = require('./demo_model')
-const DiarySession = require('./diary_model')
-const OpenAIChat = require('./utils/openai')
-const DiaryOpenAIChat = require('./utils/diary_openai')
+const Session = require('./api/model/demo_model')
+const DiarySession = require('./api/model/diary_model')
+const OpenAIChat = require('./api/utils/openai')
+const DiaryOpenAIChat = require('./api/utils/diary_openai')
 
 const router = express.Router()
 
