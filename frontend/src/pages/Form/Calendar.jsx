@@ -81,20 +81,22 @@ export default function CalendarPage() {
           >
             <div className="overflow-y-auto modal-content p-4 bg-white rounded-lg shadow-md w-1/2 mx-auto h-2/3 my-12">
               <div className="text-xl font-bold mb-4">{formatDate(date)} Diary Content</div>
-              {diaryContentsForSelectedDate.map((entry, index) => (
-                <div key={index} className="p-4 mb-4 border border-gray-300 rounded-lg">
-                  <p className="text-gray-700">
-                    {Array.isArray(entry.content)
-                      ? entry.content[entry.content.length - 1]
-                      : entry.content}
-                  </p>
-                  {entry.responseAi && (
-                    <p className="text-amber-600 font-semibold mt-2">
-                      Response AI: {entry.responseAi}
+              {diaryContentsForSelectedDate
+                .filter(entry => entry.responseAi) // 過濾具有回复的日記
+                .map((entry, index) => (
+                  <div key={index} className="p-4 mb-4 border border-gray-300 rounded-lg">
+                    <p className="text-gray-700">
+                      {Array.isArray(entry.content)
+                        ? entry.content[entry.content.length - 1]
+                        : entry.content}
                     </p>
-                  )}
-                </div>
-              ))}
+                    <p className="text-amber-600 font-semibold mt-2">
+                      {entry.responseAi}
+                    </p>
+                  </div>
+                ))
+              }
+
               <div className="mt-4 text-right">
                 <button onClick={closeModal} className="text-blue-500 hover:text-blue-700">Close</button>
               </div>
