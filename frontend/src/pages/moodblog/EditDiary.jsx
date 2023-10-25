@@ -103,7 +103,12 @@ export default function EditDiary() {
       console.log("AI Handler error:", err);
       setLoading(false); // after finishing loading, set the loading as false
     });
-  };
+  }; 
+  
+  
+  
+  
+  
   
 
   
