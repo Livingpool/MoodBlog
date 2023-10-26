@@ -1,7 +1,8 @@
 import { React, useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import Layout from "../../partials/dashboard/Layout";
-import "react-calendar/dist/Calendar.css";
+// import "react-calendar/dist/Calendar.css";
+import "../../css/Calendar.css";
 import { Button } from "@material-tailwind/react";
 import { Modal } from "@material-ui/core";
 import { useUser } from "@clerk/clerk-react";
